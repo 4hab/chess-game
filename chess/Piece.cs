@@ -13,6 +13,7 @@ namespace chess
         protected Colors _color;
         protected Image _image;
 
+        public int val => _val;
         public Piece(Coordinates coordinates, Colors color)
         {
             _coordinates = coordinates;
@@ -47,8 +48,8 @@ namespace chess
 
             for (int i = 0; i < dx.Length; i++) 
             {
-                int x = coordinates.x() + dx[i];
-                int y = coordinates.y() + dy[i];
+                int x = coordinates.x + dx[i];
+                int y = coordinates.y + dy[i];
                 while (true)
                 {
                     BoardTile[,] board = GameObserver.board;
@@ -71,25 +72,24 @@ namespace chess
     }
     class Pawn : Piece
     {
-        private bool _firstMove = true;
-
-        public bool firstMove => _firstMove;
+        private Coordinates initialCoordinates;
+        public bool firstMove => coordinates==initialCoordinates;
         public Pawn(Coordinates coordinates, Colors color) : base(coordinates, color)
         {
             _type = "pawn";
             _val = 1;
             _image = Image.FromFile(color == Colors.black ? Images.blackPawn : Images.whitePawn);
+            initialCoordinates = coordinates;
         }
 
         public override void moveTo(Coordinates coordinates)
         {
-            _firstMove = false;
             base.moveTo(coordinates);
         }
         protected override void lookForAvailableCells()
         {
             int dx = color == Colors.white ? -1 : 1;
-            int x = _coordinates.x(), y = _coordinates.y();
+            int x = _coordinates.x, y = _coordinates.y;
             BoardTile[,] board = GameObserver.board;
             if (inRange(x + dx, y) && board[x + dx, y].isEmpty())
             {
@@ -104,7 +104,7 @@ namespace chess
             {
                 board[x + dx, y - 1].switchMark();
             }
-            if (this.firstMove && board[x + dx, y].isEmpty())
+            if (firstMove && board[x + dx, y].isEmpty())
             {
                 dx *= 2;
                 board[x + dx, y] = board[x + dx, y];
@@ -145,7 +145,7 @@ namespace chess
         {
             for (int i = 0; i < 8; i++)
             {
-                int x = coordinates.x() + dx[i], y = coordinates.y() + dy[i];
+                int x = coordinates.x + dx[i], y = coordinates.y + dy[i];
                 BoardTile[,] board = GameObserver.board;
                 if (inRange(x, y) && board[x, y].isEmpty())
                 {
@@ -187,7 +187,7 @@ namespace chess
         {
             for (int i = 0; i < 8; i++)
             {
-                int x = coordinates.x() + dx[i], y = coordinates.y() + dy[i];
+                int x = coordinates.x + dx[i], y = coordinates.y + dy[i];
                 BoardTile[,] board = GameObserver.board;
                 if (inRange(x, y) && board[x, y].isEmpty())
                 {

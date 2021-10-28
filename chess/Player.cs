@@ -8,23 +8,23 @@ namespace chess
     {
         private string _name;
         private int _score;
-        private bool _isWhite;
+        private Colors _color;
 
-        public Player(string name, bool isWhite)
+        public Player(string name, Colors color)
         {
             _name = name;
             _score = 39;
-            _isWhite = isWhite;
+            _color = color;
 
         }
-        public string name()
-        {
-            return _name;
-        }
+        public string name=> _name;
+        
         public int score => _score;
-        public bool isWhite()
+
+        public void minusScore(int val)
         {
-            return _isWhite;
+            _score -= val;
         }
+        public Colors color => _color;
     }
 }

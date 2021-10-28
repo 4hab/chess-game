@@ -4,8 +4,14 @@ using System.Text;
 
 namespace chess
 {
-    class GameObserver 
+    class GameObserver
     {
+        private static Player _whitePlayer = new Player("player 1", Colors.white);
+        private static Player _blackPlayer = new Player("player 2", Colors.black);
+        private static Player _currentPlayer = _whitePlayer;
+        private static History history = new History();
+        public static BoardTile selectedTile = null;
+
         private static BoardTile[,] _board = new BoardTile[8,8];
 
         public static BoardTile[,] board => _board;
@@ -27,21 +33,65 @@ namespace chess
             putQueens();
         }
 
-        private static Player _whitePlayer = new Player("player 1",true),_blackPlayer = new Player("player 2",false);
-
-        private static Colors _currentPlayerColor = Colors.white;
-
-        public static Colors currentPlayerColor => _currentPlayerColor;
+        public static Colors currentPlayerColor => _currentPlayer.color;
 
         public static Player whitePlayer => _whitePlayer;
 
         public static Player blackPlayer => _blackPlayer;
 
-        public static BoardTile selectedTile = null;
+        private static Player currentPlayer => _currentPlayer;
+
+        private static Player otherPlayer => currentPlayer.color == Colors.white ? blackPlayer : whitePlayer;
+
+        public static void performMove(BoardTile sourceTile, BoardTile destinationTile)
+        {
+
+            MoveRecord record = new MoveRecord(sourceTile.coordinates, destinationTile.coordinates, destinationTile.piece);
+            history.add(record);
+
+            sourceTile.switchMark();
+            sourceTile.piece.unmarkAvailableCells();
+            sourceTile.piece.moveTo(destinationTile.coordinates);
+            GameObserver.kill(destinationTile.piece);
+            destinationTile.setPiece(sourceTile.piece);
+            sourceTile.setPiece(null);
+            GameObserver.selectedTile = null;
+            GameObserver.switchPlayer();
+        }
+        public static void unDoMove()
+        {
+
+            MoveRecord record = history.unDo();
+            if (record == null)
+                return;
+            BoardTile sourceTile = BoardTile.of(record.destination);
+            BoardTile destinationTile = BoardTile.of(record.source);
+
+            sourceTile.piece.moveTo(destinationTile.coordinates);
+            destinationTile.setPiece(sourceTile.piece);
+            sourceTile.setPiece(record.killedPiece);
+            GameObserver.selectedTile = null;
+            GameObserver.switchPlayer();
+        }
+
+        public static void reDoMove()
+        {
+
+            MoveRecord record = history.reDo();
+            if (record == null)
+                return;
+            BoardTile sourceTile = BoardTile.of(record.source);
+            BoardTile destinationTile = BoardTile.of(record.destination);
+            sourceTile.piece.moveTo(destinationTile.coordinates);
+            destinationTile.setPiece(sourceTile.piece);
+            sourceTile.setPiece(null);
+            GameObserver.selectedTile = null;
+            GameObserver.switchPlayer();
+        }
 
         public static void switchPlayer()
         {
-            _currentPlayerColor = _currentPlayerColor == Colors.white ? Colors.black : Colors.white;
+            _currentPlayer = otherPlayer;
         }
 
         //returns score according to white player 
@@ -56,6 +106,12 @@ namespace chess
             return tile.piece.color != currentPlayerColor;
         }
 
+        public static void kill(Piece piece)
+        {
+            if (piece == null)
+                return;
+            otherPlayer.minusScore(piece.val);
+        }
 
         private static void putPawns()
         {
@@ -146,9 +202,6 @@ namespace chess
 
             _board[whiteRow, 3] = new BoardTile(whiteQueen.coordinates, whiteQueen);
         }
-
-
-
     }
 
 

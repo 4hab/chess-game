@@ -8,51 +8,43 @@ namespace chess
 {
     class BoardTile : PictureBox
     {
+        public static BoardTile of(Coordinates coordinates)
+        {
+            return GameObserver.board[coordinates.x, coordinates.y];
+        }
         public bool isEmpty() => piece == null;
 
         private bool isMarked;
         private void onClick(object sender, EventArgs eventArgs)
         {
-            BoardTile tile = sender as BoardTile;
-            Piece piece = tile.piece;
-            BoardTile selectedTile = GameObserver.selectedTile;
+            BoardTile destinationTile = sender as BoardTile;
+            Piece piece = destinationTile.piece;
+            BoardTile sourceTile = GameObserver.selectedTile;
             //no piece here
             if (piece == null)
             {
-                if (selectedTile != null && tile.isMarked)
+                //move to empty cell
+                if (sourceTile != null && destinationTile.isMarked)
                 {
-                    selectedTile.switchMark();
-                    selectedTile.piece.unmarkAvailableCells();
-                    selectedTile.piece.moveTo(tile.coordinates);
-                    tile.setPiece(selectedTile.piece);
-                    selectedTile.setPiece(null);
-                    GameObserver.selectedTile = null;
-                    GameObserver.switchPlayer();
+                    GameObserver.performMove(sourceTile, destinationTile);
                 }
                 return;
             }
-            if (GameObserver.currentPlayerColor != this.piece.color && selectedTile == null) 
+            if (GameObserver.currentPlayerColor != this.piece.color && sourceTile == null) 
                 return;
-            //unmark or do nothing
-            if (selectedTile != null) 
+            if (sourceTile != null) 
             {
                 //unmark
-                if(tile.coordinates == selectedTile.coordinates)
+                if(destinationTile.coordinates == sourceTile.coordinates)
                 {
-                    tile.switchMark();
+                    destinationTile.switchMark();
                     piece.unmarkAvailableCells();
                     GameObserver.selectedTile = null;
                 }
-                //move to
-                else if (tile.isMarked)
+                //move to occupied cell => dead piece
+                else if (destinationTile.isMarked)
                 {
-                    selectedTile.switchMark();
-                    selectedTile.piece.unmarkAvailableCells();
-                    selectedTile.piece.moveTo(tile.coordinates);
-                    tile.setPiece(selectedTile.piece);
-                    selectedTile.setPiece(null);
-                    GameObserver.selectedTile = null;
-                    GameObserver.switchPlayer();
+                    GameObserver.performMove(sourceTile, destinationTile);
                 }
             }
             //mark
@@ -60,7 +52,7 @@ namespace chess
             {
                 this.switchMark();
                 piece.markAvailableCells();
-                GameObserver.selectedTile = tile;
+                GameObserver.selectedTile = destinationTile;
             }
         }
         public void switchMark()
@@ -79,7 +71,7 @@ namespace chess
 
         private Piece _piece;
         private Coordinates _coordinates;
-        public Colors color => (coordinates.x() + coordinates.y()) % 2 == 0 ? Colors.white: Colors.black;
+        public Colors color => (coordinates.x + coordinates.y) % 2 == 0 ? Colors.white: Colors.black;
         public Coordinates coordinates => _coordinates;
         public Piece piece => _piece;
 

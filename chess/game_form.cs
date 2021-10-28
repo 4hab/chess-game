@@ -19,13 +19,17 @@ namespace chess
             board = GameObserver.board;
 
             InitializeComponent();
-            this.SetBounds(this.Bounds.X, this.Bounds.Y, 740, 740);
-            generateBoard();
+            SetBounds(Bounds.X, Bounds.Y, 740, 740);
+            drawBoard();
 
         }
 
-        private void generateBoard()
+        private void drawBoard()
         {
+            blackPlayerNameLabel.Text = GameObserver.blackPlayer.name;
+            whitePlayerNameLabel.Text = GameObserver.whitePlayer.name;
+            blackPlayerNameLabel.SetBounds(120, 60, blackPlayerNameLabel.Size.Width, blackPlayerNameLabel.Size.Height);
+            whitePlayerNameLabel.SetBounds(120, 600, whitePlayerNameLabel.Size.Width, whitePlayerNameLabel.Size.Height);
             boardPanel.SetBounds(120, 100, 80 * 8, 80 * 8);
             int x, y=0;
             int width=60, height=60;
@@ -47,5 +51,26 @@ namespace chess
             }
         }
 
+        private void unDoButton_Click(object sender, EventArgs e)
+        {
+            GameObserver.unDoMove();
+        }
+
+        private void reDoButton_Click(object sender, EventArgs e)
+        {
+            GameObserver.reDoMove();
+        }
+
+        private void GameForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.Z)
+            {
+                GameObserver.unDoMove();
+            } 
+            else if(e.Control&&e.KeyCode==Keys.Y)
+            {
+                GameObserver.reDoMove();
+            }
+        }
     }
 }
