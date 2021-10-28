@@ -6,6 +6,7 @@ using System.Windows.Forms;
 
 namespace chess
 {
+    public enum Colors { white, black }
     static class Program
     {
         /// <summary>
@@ -17,7 +18,7 @@ namespace chess
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Game());
+            Application.Run(new GameForm());
         }
     }
 }

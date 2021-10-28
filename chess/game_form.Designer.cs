@@ -1,7 +1,7 @@
 ﻿
 namespace chess
 {
-    partial class Game
+    partial class GameForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -29,20 +29,37 @@ namespace chess
         /// </summary>
         private void InitializeComponent()
         {
+            this.boardPanel = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
-            // Game
+            // boardPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.boardPanel.Location = new System.Drawing.Point(195, 9);
+            this.boardPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.boardPanel.Name = "boardPanel";
+            this.boardPanel.Size = new System.Drawing.Size(274, 256);
+            this.boardPanel.TabIndex = 0;
+            // 
+            // GameForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Name = "Game";
+            this.ClientSize = new System.Drawing.Size(719, 661);
+            this.Controls.Add(this.boardPanel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "GameForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Chess game";
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.Panel boardPanel;
     }
 }
 
