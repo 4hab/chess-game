@@ -6,20 +6,15 @@ namespace chess
 {
     class History
     {
-        private Stack<MoveRecord> records;
-        private Stack<MoveRecord> temp;
+        private static Stack<MoveRecord> records = new Stack<MoveRecord>();
+        private static Stack<MoveRecord> temp = new Stack<MoveRecord>();
 
-        public History()
+        public static void add(Coordinates from,Coordinates to,Piece deadPiece=null)
         {
-            records = new Stack<MoveRecord>();
-            temp = new Stack<MoveRecord>();
-        }
-        public void add(MoveRecord record)
-        {
-            records.Push(record);
+            records.Push(new MoveRecord(from, to, deadPiece));
             temp.Clear();
         }
-        public MoveRecord unDo()
+        public static MoveRecord unDo()
         {
             if (records.Count == 0)
                 return null;
@@ -27,7 +22,7 @@ namespace chess
             temp.Push(mr);
             return mr;
         }
-        public MoveRecord reDo()
+        public static MoveRecord reDo()
         {
             if (temp.Count == 0)
             {

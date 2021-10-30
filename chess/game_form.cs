@@ -13,10 +13,24 @@ namespace chess
     public partial class GameForm : Form
     {
         private BoardTile[,] board;
+
+        private void updateScore()
+        {
+            int newScore = GameObserver.getScore();
+            scoreLabel.Text = newScore.ToString();
+        }
+
+        private void check()
+        {
+            checkLabel.Text = "check";
+        }
         public GameForm()
         {
-            GameObserver.initBoard();
-            board = GameObserver.board;
+            Board.init();
+            board = Board.instance;
+
+            /*GameObserver.scoreUpdated+=updateScore;
+            GameObserver.check += check;*/
 
             InitializeComponent();
             SetBounds(Bounds.X, Bounds.Y, 740, 740);
@@ -26,8 +40,8 @@ namespace chess
 
         private void drawBoard()
         {
-            blackPlayerNameLabel.Text = GameObserver.blackPlayer.name;
-            whitePlayerNameLabel.Text = GameObserver.whitePlayer.name;
+            blackPlayerNameLabel.Text = Player.blackPlayer.name;
+            whitePlayerNameLabel.Text = Player.whitePlayer.name;
             blackPlayerNameLabel.SetBounds(120, 60, blackPlayerNameLabel.Size.Width, blackPlayerNameLabel.Size.Height);
             whitePlayerNameLabel.SetBounds(120, 600, whitePlayerNameLabel.Size.Width, whitePlayerNameLabel.Size.Height);
             boardPanel.SetBounds(120, 100, 80 * 8, 80 * 8);
@@ -40,10 +54,6 @@ namespace chess
                 {
                     BoardTile tile = board[row, column];
                     tile.SetBounds(x, y, width, height);
-                    if (tile.piece != null) 
-                    {
-                        tile.Image =tile.piece.image;
-                    }
                     boardPanel.Controls.Add(tile);
                     x += width;
                 }
@@ -53,23 +63,23 @@ namespace chess
 
         private void unDoButton_Click(object sender, EventArgs e)
         {
-            GameObserver.unDoMove();
+            Board.unDoMove();
         }
 
         private void reDoButton_Click(object sender, EventArgs e)
         {
-            GameObserver.reDoMove();
+            Board.reDoMove();
         }
 
         private void GameForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Control && e.KeyCode == Keys.Z)
             {
-                GameObserver.unDoMove();
+                Board.unDoMove();
             } 
             else if(e.Control&&e.KeyCode==Keys.Y)
             {
-                GameObserver.reDoMove();
+                Board.reDoMove();
             }
         }
     }

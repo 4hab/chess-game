@@ -7,17 +7,17 @@ namespace chess
     class MoveRecord
     {
         private Coordinates _source, _destination;
-        Piece _killedPiece;
+        Piece _deadPiece;
 
-        public Piece killedPiece => _killedPiece;
+        public Piece deadPiece => _deadPiece;
         public Coordinates source => _source;
         public Coordinates destination => _destination;
 
-        public MoveRecord(Coordinates from, Coordinates to, Piece killedPiece = null)
+        public MoveRecord(Coordinates from, Coordinates to, Piece deadPiece = null)
         {
             _source = from;
             _destination = to;
-            _killedPiece = killedPiece;
+            _deadPiece = deadPiece;
         }
 
     }

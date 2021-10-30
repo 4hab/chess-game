@@ -8,85 +8,100 @@ namespace chess
 {
     class BoardTile : PictureBox
     {
-        public static BoardTile of(Coordinates coordinates)
-        {
-            return GameObserver.board[coordinates.x, coordinates.y];
-        }
-        public bool isEmpty() => piece == null;
+        private bool _isAvailable = false;
+        private bool _danger = false;
+        private Piece _piece;
+        private Coordinates _coordinates;
 
-        private bool isMarked;
+        public bool isEmpty() => piece == null;
+        public PieceColor color => (coordinates.x + coordinates.y) % 2 == 0 ? PieceColor.white : PieceColor.black;
+        public Coordinates coordinates => _coordinates;
+        public Piece piece => _piece;
+        public bool isAvailable => _isAvailable;
+        public bool danger => _danger;
+        public BoardTile(Coordinates coordinates, Piece piece = null)
+        {
+            _coordinates = coordinates;
+            BackColor = color == PieceColor.white ? Color.White : Color.Brown;
+            Click += onClick;
+            _isAvailable = false;
+            setPiece(piece);
+        }
+
+        public void markDanger(bool val)
+        {
+            _danger = val;
+            if (val == true)
+            {
+                //other player's king is attacked
+                if (piece != null && piece is King && Player.otherPlayer.isMyPiece(piece))
+                {
+                    Player.otherPlayer.inDanger(true);
+                    if (!Player.currentPlayer.virtualAttack)
+                        BackColor = Color.Red;
+                }
+            }
+        }
         private void onClick(object sender, EventArgs eventArgs)
         {
-            BoardTile destinationTile = sender as BoardTile;
-            Piece piece = destinationTile.piece;
-            BoardTile sourceTile = GameObserver.selectedTile;
-            //no piece here
-            if (piece == null)
+            if (Board.selectedTile != null)
             {
-                //move to empty cell
-                if (sourceTile != null && destinationTile.isMarked)
+                BoardTile tileA = Board.selectedTile;
+                BoardTile tileB = sender as BoardTile;
+                if (tileA.coordinates == tileB.coordinates)
                 {
-                    GameObserver.performMove(sourceTile, destinationTile);
+                    //disselect
+                    Board.select(null);
+                    //unmark available cells
+                    tileA.piece.unmarkAvailableCells();
                 }
-                return;
-            }
-            if (GameObserver.currentPlayerColor != this.piece.color && sourceTile == null) 
-                return;
-            if (sourceTile != null) 
-            {
-                //unmark
-                if(destinationTile.coordinates == sourceTile.coordinates)
+                else if (tileB.isAvailable)
                 {
-                    destinationTile.switchMark();
-                    piece.unmarkAvailableCells();
-                    GameObserver.selectedTile = null;
+                    //add to history
+                    History.add(tileA.coordinates, tileB.coordinates, tileB.piece);
+                    //move 
+                    Board.move(tileA.coordinates, tileB.coordinates);
+                    //mark danger squares
+                    Player.currentPlayer.attack();
+                    Player.currentPlayer.inDanger(false);
+                    //switch player
+                    Player.switchPlayer();
                 }
-                //move to occupied cell => dead piece
-                else if (destinationTile.isMarked)
+                else
                 {
-                    GameObserver.performMove(sourceTile, destinationTile);
+                    return;
                 }
             }
-            //mark
-            else if (piece != null)
+            else
             {
-                this.switchMark();
-                piece.markAvailableCells();
-                GameObserver.selectedTile = destinationTile;
+                BoardTile tile = sender as BoardTile;
+                if (!tile.isEmpty() && Player.currentPlayer.isMyPiece(tile.piece))
+                {
+                    Board.select(tile);
+                    tile.piece.markAvailableCells();
+                    //mark available cells
+                }
+                else
+                    return;
             }
         }
         public void switchMark()
         {
-            if (!isMarked)
+            _isAvailable = !_isAvailable;
+            if (isAvailable)
             {
-                this.BackColor = this.BackColor == Color.White ? Color.LimeGreen : Color.Green;
-                isMarked = true;
+                BackColor = color == PieceColor.white ? Color.LimeGreen : Color.Green;
             }
-            else if (isMarked)
+            else
             {
-                this.BackColor = this.BackColor == Color.LimeGreen ? Color.White : Color.Brown;
-                isMarked = false;
+                BackColor = color == PieceColor.white ? Color.White : Color.Brown;
             }
         }
-
-        private Piece _piece;
-        private Coordinates _coordinates;
-        public Colors color => (coordinates.x + coordinates.y) % 2 == 0 ? Colors.white: Colors.black;
-        public Coordinates coordinates => _coordinates;
-        public Piece piece => _piece;
-
-        public void setPiece(Piece piece)
+        public void setPiece(Piece piece, bool virt = false)
         {
             _piece = piece;
-            this.Image = piece?.image;
-        }
-        public BoardTile(Coordinates coordinates, Piece piece = null)
-        {
-            this._coordinates = coordinates;
-            this.BackColor = color==Colors.white ? Color.White : Color.Brown;
-            this._piece = piece;
-            this.Click += onClick;
-            this.isMarked = false;
+            if (!virt)
+                Image = piece?.image;
         }
     }
 }
