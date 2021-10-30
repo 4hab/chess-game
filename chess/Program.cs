@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace chess
 {
-    public enum Colors { white, black }
+    public enum PieceColor { white, black }
     static class Program
     {
         /// <summary>

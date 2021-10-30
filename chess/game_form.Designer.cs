@@ -34,6 +34,8 @@ namespace chess
             this.whitePlayerNameLabel = new System.Windows.Forms.Label();
             this.unDoButton = new System.Windows.Forms.Button();
             this.reDoButton = new System.Windows.Forms.Button();
+            this.scoreLabel = new System.Windows.Forms.Label();
+            this.checkLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // boardPanel
@@ -84,11 +86,31 @@ namespace chess
             this.reDoButton.UseVisualStyleBackColor = true;
             this.reDoButton.Click += new System.EventHandler(this.reDoButton_Click);
             // 
+            // scoreLabel
+            // 
+            this.scoreLabel.AutoSize = true;
+            this.scoreLabel.Location = new System.Drawing.Point(232, 19);
+            this.scoreLabel.Name = "scoreLabel";
+            this.scoreLabel.Size = new System.Drawing.Size(38, 15);
+            this.scoreLabel.TabIndex = 7;
+            this.scoreLabel.Text = "label1";
+            // 
+            // checkLabel
+            // 
+            this.checkLabel.AutoSize = true;
+            this.checkLabel.Location = new System.Drawing.Point(376, 20);
+            this.checkLabel.Name = "checkLabel";
+            this.checkLabel.Size = new System.Drawing.Size(38, 15);
+            this.checkLabel.TabIndex = 8;
+            this.checkLabel.Text = "label1";
+            // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(719, 661);
+            this.Controls.Add(this.checkLabel);
+            this.Controls.Add(this.scoreLabel);
             this.Controls.Add(this.reDoButton);
             this.Controls.Add(this.unDoButton);
             this.Controls.Add(this.whitePlayerNameLabel);
@@ -115,6 +137,8 @@ namespace chess
         private System.Windows.Forms.Label whitePlayerNameLabel;
         private System.Windows.Forms.Button unDoButton;
         private System.Windows.Forms.Button reDoButton;
+        private System.Windows.Forms.Label scoreLabel;
+        private System.Windows.Forms.Label checkLabel;
     }
 }
 
