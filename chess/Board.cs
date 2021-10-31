@@ -20,15 +20,23 @@ namespace chess
             _selectedTile = tile;
         }
 
+
         public static void move(Coordinates c1,Coordinates c2)
         {
             //change piece coordinates firs
             Board.of(c1).piece.unmarkAvailableCells();
             Board.of(c1).piece.moveTo(c2);
+            //change score
+            if(!Board.of(c2).isEmpty())
+                Player.otherPlayer.minusScore(Board.of(c2).piece.val);
             //move pieces
             Board.of(c2).setPiece(Board.of(c1).piece);
             Board.of(c1).setPiece(null);
             select(null);
+            if(Board.of(c2).piece is King)
+            {
+                Player.currentPlayer.moveKing(c2);
+            }
         }
 
         public static void init()
@@ -47,68 +55,6 @@ namespace chess
             putKings();
             putQueens();
         }
-
-        public static bool isSafeMove(Coordinates c1,Coordinates c2)
-        {
-            //save original situation
-            Piece p1 = Board.of(c1).piece;
-            Piece p2 = Board.of(c2).piece;
-            bool initialDangerStatus = Player.currentPlayer.isAttacked;
-            Player.currentPlayer.inDanger(false);
-
-            //move pieces virtually
-            Board.of(c2).setPiece(p1,true);
-            Board.of(c1).setPiece(null, true);
-
-            //let other player attacks [virtually] to see if the situation is safe or not
-            Player.switchPlayer();
-            Player.currentPlayer.setVirtualAttack(true);
-            Player.currentPlayer.attack();
-            Player.currentPlayer.setVirtualAttack(false);
-            Player.switchPlayer();
-            bool currentDangerStatus = Player.currentPlayer.isAttacked;
-
-            //return to the original situation
-            Board.of(c2).setPiece(p2);
-            Board.of(c1).setPiece(p1);
-            Player.currentPlayer.inDanger(initialDangerStatus);
-
-            //if my king is attacked => false(not safe move) otherwise => true(safe move)
-            return !currentDangerStatus;
-        }
-
-        public static void reDoMove()
-        {
-
-            MoveRecord record = History.reDo();
-            if (record == null)
-                return;
-            BoardTile sourceTile = Board.of(record.source);
-            BoardTile destinationTile = Board.of(record.destination);
-            sourceTile.piece.moveTo(destinationTile.coordinates);
-            destinationTile.setPiece(sourceTile.piece);
-            sourceTile.setPiece(null);
-            Board.select(null);
-            Player.switchPlayer();
-        }
-
-        public static void unDoMove()
-        {
-
-            MoveRecord record = History.unDo();
-            if (record == null)
-                return;
-            BoardTile destinationTile = Board.of(record.destination);
-            BoardTile sourceTile = Board.of(record.source);
-
-            destinationTile.piece.moveTo(record.source);
-
-            sourceTile.setPiece(destinationTile.piece);
-            destinationTile.setPiece(record.deadPiece);
-            Board.select(null);
-            Player.switchPlayer();
-        }
-
         private static void putPawns()
         {
             for (int column = 0; column < 8; column++)

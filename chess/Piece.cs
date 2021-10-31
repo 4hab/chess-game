@@ -24,20 +24,24 @@ namespace chess
         public Image image => _image;
 
         public Coordinates coordinates => _coordinates;
-        public virtual void markAvailableCells() 
+        public virtual int markAvailableCells() 
         {
-            lookForAvailableCells();
+            return lookForAvailableCells(false);
         }
-        public virtual void unmarkAvailableCells()
+        public virtual int unmarkAvailableCells()
         {
-            lookForAvailableCells();
+            return lookForAvailableCells(false);
         }
-        protected virtual void lookForAvailableCells() { }
+        protected virtual int lookForAvailableCells(bool countOnly) { return 0; }
         public void moveTo(Coordinates coordinates)
         {
             _coordinates = coordinates;
         }
 
+        public int countAvailableTiles()
+        {
+            return lookForAvailableCells(true);
+        }
         public bool isEnemy()
         {
             return color != Player.currentPlayer.color;
@@ -50,9 +54,10 @@ namespace chess
         {
             return coordinates.x >= 0 && coordinates.x < 8 && coordinates.y >= 0 && coordinates.y < 8;
         }
-        protected void multiStepsMoving(int[] dx, int[] dy)
+        protected int multiStepsMoving(int[] dx, int[] dy,bool countOnly)
         {
-            Board.of(coordinates).switchMark();
+            int ret = 0;
+            Board.of(coordinates).switchMark(countOnly);
             for (int i = 0; i < dx.Length; i++)
             {
                 Coordinates c = new Coordinates(coordinates.x + dx[i], coordinates.y + dy[i]);
@@ -63,13 +68,19 @@ namespace chess
                         BoardTile tile = Board.of(c);
                         if (tile.isEmpty())
                         {
-                            if(Board.isSafeMove(coordinates, c))
-                                tile.switchMark();
+                            if (GameObserver.isSafeMove(coordinates, c))
+                            {
+                                tile.switchMark(countOnly);
+                                ret++;
+                            }
                         }
                         else if (tile.piece.isEnemy())
                         {
-                            if(Board.isSafeMove(coordinates, c))
-                                tile.switchMark();
+                            if(GameObserver.isSafeMove(coordinates, c))
+                            {
+                                tile.switchMark(countOnly);
+                                ret++;
+                            }
                             break;
                         }
                         else break;
@@ -78,6 +89,7 @@ namespace chess
                     else break;
                 }
             }
+            return ret;
         }
         protected void multiStepsAttack(int[] dx, int[] dy)
         {
@@ -123,11 +135,10 @@ namespace chess
         }
 
         private int dx => color == PieceColor.white ? -1 : 1;
-        protected override void lookForAvailableCells()
+        protected override int lookForAvailableCells(bool countOnly)
         {
-            Board.of(coordinates).switchMark();
-            _attack();
-            _move();
+            Board.of(coordinates).switchMark(countOnly);
+            return _attack(countOnly)+_move(countOnly);
         }
 
         public override void attack()
@@ -145,46 +156,54 @@ namespace chess
                 tile.markDanger(true);
             }
         }
-        private void _attack()
+        private int _attack(bool countOnly)
         {
+            int ret = 0;
             Coordinates c1 = new Coordinates(coordinates.x + dx, coordinates.y + 1);
             Coordinates c2 = new Coordinates(coordinates.x + dx, coordinates.y - 1);
             if (inRange(c1))
             {
                 BoardTile tile = Board.of(c1);
-                if (!tile.isEmpty() && tile.piece.isEnemy() && Board.isSafeMove(coordinates, c1))
+                if (!tile.isEmpty() && tile.piece.isEnemy() && GameObserver.isSafeMove(coordinates, c1))
                 {
-                    tile.switchMark();
+                    tile.switchMark(countOnly);
+                    ret++;
                 }
             }
             if (inRange(c2))
             {
                 BoardTile tile = Board.of(c2);
-                if (!tile.isEmpty() && tile.piece.isEnemy() && Board.isSafeMove(coordinates, c2))
+                if (!tile.isEmpty() && tile.piece.isEnemy() && GameObserver.isSafeMove(coordinates, c2))
                 {
-                    tile.switchMark();
+                    tile.switchMark(countOnly);
+                    ret++;
                 }
             }
+            return ret;
         }
-        private void _move()
+        private int _move(bool countOnly)
         {
+            int ret = 0;
             Coordinates c1 = new Coordinates(coordinates.x + dx, coordinates.y);
             Coordinates c2 = new Coordinates(coordinates.x + dx + dx, coordinates.y);
             if(inRange(c1))
             {
                 BoardTile tile = Board.of(c1);
-                if (tile.isEmpty() && Board.isSafeMove(coordinates, c1)) 
+                if (tile.isEmpty() && GameObserver.isSafeMove(coordinates, c1)) 
                 {
                     //mark c1
-                    tile.switchMark();
+                    tile.switchMark(countOnly);
+                    ret++;
                     tile = Board.of(c2);
-                    if (firstMove && tile.isEmpty() && Board.isSafeMove(coordinates, c2)) 
+                    if (firstMove && tile.isEmpty() && GameObserver.isSafeMove(coordinates, c2)) 
                     {
                         //mark c2
-                        tile.switchMark();
+                        tile.switchMark(countOnly);
+                        ret++;
                     }
                 }
             }
+            return ret;
         }
     }
     class Rook : Piece
@@ -197,9 +216,9 @@ namespace chess
             _val = 5;
             _image = Image.FromFile(color == PieceColor.black ? Images.blackRook : Images.whiteRook);
         }
-        protected override void lookForAvailableCells()
+        protected override int lookForAvailableCells(bool countOnly)
         {
-            multiStepsMoving(dx, dy);
+            return multiStepsMoving(dx, dy,countOnly);
         }
         public override void attack()
         {
@@ -217,25 +236,29 @@ namespace chess
             _image = Image.FromFile(color == PieceColor.black ? Images.blackKnight : Images.whiteKnight);
         }
 
-        protected override void lookForAvailableCells()
+        protected override int lookForAvailableCells(bool countOnly)
         {
-            Board.of(coordinates).switchMark();
+            int ret = 0;
+            Board.of(coordinates).switchMark(countOnly);
             for (int i = 0; i < 8; i++)
             {
                 Coordinates c = new Coordinates(coordinates.x + dx[i], coordinates.y + dy[i]);
                 if (inRange(c))
                 {
                     BoardTile tile = Board.of(c);
-                    if (tile.isEmpty() && Board.isSafeMove(coordinates, c))
+                    if (tile.isEmpty() && GameObserver.isSafeMove(coordinates, c))
                     {
-                        tile.switchMark();
+                        tile.switchMark(countOnly);
+                        ret++;
                     }
-                    else if (!tile.isEmpty() && tile.piece.isEnemy() && Board.isSafeMove(coordinates, c)) 
+                    else if (!tile.isEmpty() && tile.piece.isEnemy() && GameObserver.isSafeMove(coordinates, c)) 
                     {
-                        tile.switchMark();
+                        tile.switchMark(countOnly);
+                        ret++;
                     }
                 }
             }
+            return ret;
         }
 
         public override void attack()
@@ -261,9 +284,9 @@ namespace chess
             _val = 3;
             _image = Image.FromFile(color == PieceColor.black ? Images.blackBishop : Images.whiteBishop);
         }
-        protected override void lookForAvailableCells()
+        protected override int lookForAvailableCells(bool countOnly)
         {
-            multiStepsMoving(dx, dy);
+            return multiStepsMoving(dx, dy,countOnly);
         }
         public override void attack()
         {
@@ -280,26 +303,30 @@ namespace chess
             _val = 1;
             _image = Image.FromFile(color == PieceColor.black ? Images.blackKing : Images.whiteKing);
         }
-        protected override void lookForAvailableCells()
+        protected override int lookForAvailableCells(bool countOnly)
         {
-            Board.of(coordinates).switchMark();
+            int ret = 0;
+            Board.of(coordinates).switchMark(countOnly);
             for (int i = 0; i < 8; i++)
             {
                 Coordinates c = new Coordinates(coordinates.x + dx[i], coordinates.y + dy[i]);
                 if (inRange(c))
                 {
                     BoardTile tile = Board.of(c);
-                    if (tile.isEmpty() && !tile.danger && Board.isSafeMove(coordinates, c))
+                    if (tile.isEmpty() && !tile.danger && GameObserver.isSafeMove(coordinates, c))
                     {
-                        tile.switchMark();
+                        tile.switchMark(countOnly);
+                        ret++;
                     }
-                    else if (!tile.isEmpty() && tile.piece.isEnemy() && !tile.danger && Board.isSafeMove(coordinates, c)) 
+                    else if (!tile.isEmpty() && tile.piece.isEnemy() && !tile.danger && GameObserver.isSafeMove(coordinates, c)) 
                     {
-                        tile.switchMark();
+                        tile.switchMark(countOnly);
+                        ret++;
                     }
 
                 }
             }
+            return ret;
         }
 
         public override void attack()
@@ -325,9 +352,9 @@ namespace chess
             _val = 9;
             _image = Image.FromFile(color == PieceColor.black ? Images.blackQueen : Images.whiteQueen);
         }
-        protected override void lookForAvailableCells()
+        protected override int lookForAvailableCells(bool countOnly)
         {
-            multiStepsMoving(dx, dy);
+            return multiStepsMoving(dx, dy, countOnly);
         }
         public override void attack()
         {

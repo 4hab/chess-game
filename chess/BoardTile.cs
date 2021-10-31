@@ -22,7 +22,7 @@ namespace chess
         public BoardTile(Coordinates coordinates, Piece piece = null)
         {
             _coordinates = coordinates;
-            BackColor = color == PieceColor.white ? Color.White : Color.Brown;
+            BackColor = color == PieceColor.white ? Color.White : Color.DarkGray;
             Click += onClick;
             _isAvailable = false;
             setPiece(piece);
@@ -66,6 +66,7 @@ namespace chess
                     Player.currentPlayer.inDanger(false);
                     //switch player
                     Player.switchPlayer();
+                    GameObserver.isGameOver();
                 }
                 else
                 {
@@ -79,22 +80,23 @@ namespace chess
                 {
                     Board.select(tile);
                     tile.piece.markAvailableCells();
-                    //mark available cells
                 }
                 else
                     return;
             }
         }
-        public void switchMark()
+        public void switchMark(bool countOnly)
         {
+            if (countOnly)
+                return;
             _isAvailable = !_isAvailable;
-            if (isAvailable)
+            if (isAvailable) 
             {
                 BackColor = color == PieceColor.white ? Color.LimeGreen : Color.Green;
             }
             else
             {
-                BackColor = color == PieceColor.white ? Color.White : Color.Brown;
+                BackColor = color == PieceColor.white ? Color.White : Color.DarkGray;
             }
         }
         public void setPiece(Piece piece, bool virt = false)
