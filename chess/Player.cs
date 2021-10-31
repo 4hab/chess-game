@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
 
 namespace chess
 {
@@ -32,14 +33,25 @@ namespace chess
         private bool _castle;
         private bool _isAttacked;
         private bool _virtualAttack = false;
+        private BoardTile _kingTile;
 
         public void setVirtualAttack(bool val) => _virtualAttack = val;
         public bool virtualAttack => _virtualAttack;
         public bool castle => _castle;
         public bool isAttacked => _isAttacked;
+        public void moveKing(Coordinates c)
+        {
+            _kingTile = Board.of(c);
+        }
         public void inDanger(bool val)
         {
             _isAttacked = val;
+            _kingTile.BackColor = Color.Red;
+            if(val==false)
+            {
+                //switch king's tile color to normal
+                _kingTile.BackColor = _kingTile.color == PieceColor.white ? Color.White : Color.DarkGray;
+            }
         }
         public Player(string name, PieceColor color)
         {
@@ -48,6 +60,7 @@ namespace chess
             _color = color;
             _castle = true;
             _isAttacked = false;
+            _kingTile = (color == PieceColor.white) ? Board.of(new Coordinates(7, 4)) : Board.of(new Coordinates(0, 4));
 
         }
         public string name=> _name;
@@ -57,6 +70,7 @@ namespace chess
         public void minusScore(int val)
         {
             _score -= val;
+            GameObserver.updateScore();
         }
         public PieceColor color => _color;
         public void attack()
