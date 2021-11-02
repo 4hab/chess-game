@@ -87,6 +87,7 @@ namespace chess
             {
                 Board.reDoMove();
             }
+
         }
     }
 }
