@@ -7,9 +7,9 @@ namespace chess
     public delegate void Notify();
     class GameObserver
     {
-
         public static BoardTile selectedTile = null;
         public static Notify gameOver;
+        public static Notify gameOverDraw;
         public static Notify scoreUpdated;
         public static int score=> Player.whitePlayer.score - Player.blackPlayer.score;
 
@@ -29,12 +29,9 @@ namespace chess
             //move pieces virtually
             Board.of(c2).setPiece(p1, true);
             Board.of(c1).setPiece(null, true);
-
             //let other player attacks [virtually] to see if the situation is safe or not
             Player.switchPlayer();
-            Player.currentPlayer.setVirtualAttack(true);
-            Player.currentPlayer.attack();
-            Player.currentPlayer.setVirtualAttack(false);
+            Player.currentPlayer.attack(virtually: true);
             Player.switchPlayer();
             bool currentDangerStatus = Player.currentPlayer.isAttacked;
 
@@ -47,58 +44,6 @@ namespace chess
             return !currentDangerStatus;
         }
 
-        public static void reDoMove()
-        {
-            if (Board.selectedTile != null)
-            {
-                Board.selectedTile.piece.unmarkAvailableCells();
-                Board.select(null);
-            }
-            MoveRecord record = History.reDo();
-            if (record == null)
-                return;
-            BoardTile sourceTile = Board.of(record.source);
-            BoardTile destinationTile = Board.of(record.destination);
-
-            //update score
-            Piece p = destinationTile.piece;
-            if (p != null)
-            {
-                Player.otherPlayer.minusScore(p.val);
-            }
-
-            sourceTile.piece.moveTo(destinationTile.coordinates);
-            destinationTile.setPiece(sourceTile.piece);
-            sourceTile.setPiece(null);
-            Board.select(null);
-            Player.switchPlayer();
-        }
-        public static void unDoMove()
-        {
-            if (Board.selectedTile != null)
-            {
-                Board.selectedTile.piece.unmarkAvailableCells();
-                Board.select(null);
-            }
-            MoveRecord record = History.unDo();
-            if (record == null)
-                return;
-            BoardTile destinationTile = Board.of(record.destination);
-            BoardTile sourceTile = Board.of(record.source);
-
-            //update score
-            if (record.deadPiece != null)
-            {
-                Player.currentPlayer.minusScore(record.deadPiece.val * -1);
-            }
-
-            destinationTile.piece.moveTo(record.source);
-
-            sourceTile.setPiece(destinationTile.piece);
-            destinationTile.setPiece(record.deadPiece);
-            Board.select(null);
-            Player.switchPlayer();
-        }
         public static void isGameOver()
         {
             for(int i = 0; i < 8; i++)
@@ -111,6 +56,12 @@ namespace chess
                         return;
                     }
                 }
+            }
+            if(!Player.currentPlayer.isAttacked)
+            {
+                //draw
+                gameOverDraw.Invoke();
+                return;
             }
             gameOver.Invoke();
             return;

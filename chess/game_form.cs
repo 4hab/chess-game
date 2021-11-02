@@ -17,6 +17,10 @@ namespace chess
         {
             MessageBox.Show(Player.otherPlayer.name + " Won the match", "Game Over!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
         }
+        private void gameOverDraw()
+        {
+            MessageBox.Show("Draw No one won", "Game Over!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+        }
         public GameForm()
         {
             Board.init();
@@ -26,6 +30,7 @@ namespace chess
             GameObserver.check += check;*/
             GameObserver.gameOver += gameOver;
             GameObserver.scoreUpdated += updateScore;
+            GameObserver.gameOverDraw += gameOverDraw;
             InitializeComponent();
             SetBounds(Bounds.X, Bounds.Y, 740, 740);
             drawBoard();
@@ -64,23 +69,23 @@ namespace chess
 
         private void unDoButton_Click(object sender, EventArgs e)
         {
-            GameObserver.unDoMove();
+            Board.unDoMove();
         }
 
         private void reDoButton_Click(object sender, EventArgs e)
         {
-            GameObserver.reDoMove();
+            Board.reDoMove();
         }
 
         private void GameForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Control && e.KeyCode == Keys.Z)
             {
-                GameObserver.unDoMove();
+                Board.unDoMove();
             } 
             else if(e.Control&&e.KeyCode==Keys.Y)
             {
-                GameObserver.reDoMove();
+                Board.reDoMove();
             }
         }
     }
