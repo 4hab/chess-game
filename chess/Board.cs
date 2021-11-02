@@ -21,24 +21,76 @@ namespace chess
         }
 
 
-        public static void move(Coordinates c1,Coordinates c2)
+        public static void move(Coordinates c1, Coordinates c2)
         {
+            //add to history
+            History.add(c1, c2, of(c2).piece);
             //change piece coordinates firs
             Board.of(c1).piece.unmarkAvailableCells();
             Board.of(c1).piece.moveTo(c2);
             //change score
-            if(!Board.of(c2).isEmpty())
+            if (!Board.of(c2).isEmpty())
                 Player.otherPlayer.minusScore(Board.of(c2).piece.val);
             //move pieces
             Board.of(c2).setPiece(Board.of(c1).piece);
             Board.of(c1).setPiece(null);
             select(null);
-            if(Board.of(c2).piece is King)
-            {
-                Player.currentPlayer.moveKing(c2);
-            }
+            _afterMove();
         }
+        public static void unDoMove()
+        {
+            if (Board.selectedTile != null)
+            {
+                Board.selectedTile.piece.unmarkAvailableCells();
+                Board.select(null);
+            }
+            MoveRecord record = History.unDo();
+            if (record == null)
+                return;
+            Coordinates c1 = record.destination, c2 = record.source;
+            Player.switchPlayer();
+            Board.of(c1).piece.moveTo(c2);
+            Player.switchPlayer();
+            if (record.deadPiece != null)
+                Player.otherPlayer.minusScore(record.deadPiece.val * -1);
+            Board.of(c2).setPiece(Board.of(c1).piece);
+            Board.of(c1).setPiece(record.deadPiece);
+            select(null);
+            _afterMove();
+        }
+        public static void reDoMove()
+        {
+            if (Board.selectedTile != null)
+            {
+                Board.selectedTile.piece.unmarkAvailableCells();
+                Board.select(null);
+            }
+            MoveRecord record = History.reDo();
+            if (record == null)
+                return;
 
+            Coordinates c1 = record.source, c2 = record.destination;
+            Player.switchPlayer();
+            Board.of(c1).piece.moveTo(c2);
+            Player.switchPlayer();
+            if (Board.of(c1).piece != null)
+            {
+                Player.otherPlayer.minusScore(Board.of(c1).piece.val);
+            }
+            Board.of(c2).setPiece(Board.of(c1).piece);
+            Board.of(c1).setPiece(null);
+            select(null);
+            _afterMove();
+        }
+        private static void _afterMove()
+        {
+            //mark danger squares
+            Player.currentPlayer.attack();
+            Player.currentPlayer.inDanger(false);
+            //switch player
+            Player.switchPlayer();
+            GameObserver.isGameOver();
+        }
         public static void init()
         {
             for (int row = 0; row < 8; row++)

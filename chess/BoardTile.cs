@@ -57,16 +57,8 @@ namespace chess
                 }
                 else if (tileB.isAvailable)
                 {
-                    //add to history
-                    History.add(tileA.coordinates, tileB.coordinates, tileB.piece);
                     //move 
                     Board.move(tileA.coordinates, tileB.coordinates);
-                    //mark danger squares
-                    Player.currentPlayer.attack();
-                    Player.currentPlayer.inDanger(false);
-                    //switch player
-                    Player.switchPlayer();
-                    GameObserver.isGameOver();
                 }
                 else
                 {

@@ -35,12 +35,12 @@ namespace chess
         private bool _virtualAttack = false;
         private BoardTile _kingTile;
 
-        public void setVirtualAttack(bool val) => _virtualAttack = val;
         public bool virtualAttack => _virtualAttack;
         public bool castle => _castle;
         public bool isAttacked => _isAttacked;
         public void moveKing(Coordinates c)
         {
+            inDanger(false);
             _kingTile = Board.of(c);
         }
         public void inDanger(bool val)
@@ -73,8 +73,9 @@ namespace chess
             GameObserver.updateScore();
         }
         public PieceColor color => _color;
-        public void attack()
+        public void attack(bool virtually = false)
         {
+            _virtualAttack = virtually;
             BoardTile[,] board = Board.instance;
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
