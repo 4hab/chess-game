@@ -44,6 +44,12 @@ namespace chess
             return !currentDangerStatus;
         }
 
+        public static void reset()
+        {
+            Board.init();
+            Player.reset();
+            History.clear();
+        }
         public static void isGameOver()
         {
             for(int i = 0; i < 8; i++)
