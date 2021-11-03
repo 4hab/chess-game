@@ -15,17 +15,31 @@ namespace chess
         private BoardTile[,] board;
         private void gameOver()
         {
-            MessageBox.Show(Player.otherPlayer.name + " Won the match", "Game Over!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            DialogResult result = MessageBox.Show(Player.otherPlayer.name + " Won the match\nPlay again?", "Game Over!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            stayOrLeave(result);
+        }
+        private void stayOrLeave(DialogResult result)
+        {
+            if (result == DialogResult.Yes)
+            {
+                GameObserver.reset();
+                this.Close();
+            }
+            else
+            {
+                Environment.Exit(0);
+            }
         }
         private void gameOverDraw()
         {
-            MessageBox.Show("Draw No one won", "Game Over!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            DialogResult result = MessageBox.Show("Draw No one won\nPlay again?", "Game Over!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            stayOrLeave(result);
         }
-        public GameForm()
+        public GameForm(string firstPlayerName, string secondPlayerName)
         {
             Board.init();
             board = Board.instance;
-
+            Player.setPlayersNames(firstPlayerName, secondPlayerName);
             /*GameObserver.scoreUpdated+=updateScore;
             GameObserver.check += check;*/
             GameObserver.gameOver += gameOver;
@@ -87,6 +101,7 @@ namespace chess
             {
                 Board.reDoMove();
             }
+            //commnt
         }
     }
 }

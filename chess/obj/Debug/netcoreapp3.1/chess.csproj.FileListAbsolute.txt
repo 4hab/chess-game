@@ -15,3 +15,4 @@ E:\chess\chess\obj\Debug\netcoreapp3.1\chess.pdb
 E:\chess\chess\obj\Debug\netcoreapp3.1\chess.genruntimeconfig.cache
 E:\chess\chess\obj\Debug\netcoreapp3.1\chess.Properties.Resources.resources
 E:\chess\chess\obj\Debug\netcoreapp3.1\chess.csproj.AssemblyReference.cache
+E:\chess\chess\obj\Debug\netcoreapp3.1\chess.WelcomeForm.resources

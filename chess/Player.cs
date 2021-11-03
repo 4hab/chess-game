@@ -19,11 +19,24 @@ namespace chess
                 _currentPlayer = _player1;
         }
 
+        public static void reset()
+        {
+            _currentPlayer = _player1;
+            _player1.resetData();
+            _player2.resetData();
+        }
+
         public static Player currentPlayer => _currentPlayer;
         public static Player otherPlayer => _currentPlayer == _player1 ? _player2 : _player1;
 
         public static Player whitePlayer => _player1;
         public static Player blackPlayer => _player2;
+
+        public static void setPlayersNames(string name1,string name2)
+        {
+            whitePlayer.setName(name1);
+            blackPlayer.setName(name2);
+        }
 
         //-------------------------------------------------------------------------------------------
 
@@ -34,7 +47,19 @@ namespace chess
         private bool _isAttacked;
         private bool _virtualAttack = false;
         private BoardTile _kingTile;
+        public void setName(string name)
+        {
+            _name = name;
+        }
 
+        public void resetData()
+        {
+            _score = 39;
+            _castle = true;
+            _isAttacked = false;
+            _virtualAttack = false;
+            _kingTile = _color == PieceColor.white ? Board.of(new Coordinates(7, 4)): Board.of(new Coordinates(0, 4));
+        }
         public bool virtualAttack => _virtualAttack;
         public bool castle => _castle;
         public bool isAttacked => _isAttacked;

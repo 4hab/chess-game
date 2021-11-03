@@ -9,6 +9,11 @@ namespace chess
         private static Stack<MoveRecord> records = new Stack<MoveRecord>();
         private static Stack<MoveRecord> temp = new Stack<MoveRecord>();
 
+        public static void clear()
+        {
+            records.Clear();
+            temp.Clear();
+        }
         public static void add(Coordinates from,Coordinates to,Piece deadPiece=null)
         {
             records.Push(new MoveRecord(from, to, deadPiece));

@@ -4,7 +4,10 @@
     <Compile Update="BoardTile.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Update="game_form.cs">
+    <Compile Update="WelcomeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="GameForm.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

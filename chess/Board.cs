@@ -93,6 +93,8 @@ namespace chess
         }
         public static void init()
         {
+            _selectedTile = null;
+            History.clear();
             for (int row = 0; row < 8; row++)
             {
                 for (int column = 0; column < 8; column++)
