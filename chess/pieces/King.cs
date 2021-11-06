@@ -23,14 +23,15 @@ namespace chess
         }
         protected override int lookForAvailableCells(bool countOnly)
         {
+            Board board = Board.instance;
             int ret = 0;
-            Board.of(coordinates).switchMark(countOnly);
+            board.of(coordinates).switchMark(countOnly);
             for (int i = 0; i < 8; i++)
             {
                 Coordinates c = new Coordinates(coordinates.x + dx[i], coordinates.y + dy[i]);
                 if (inRange(c))
                 {
-                    BoardTile tile = Board.of(c);
+                    BoardTile tile = board.of(c);
                     if (tile.isEmpty() && !tile.danger && GameObserver.isSafeMove(coordinates, c))
                     {
                         tile.switchMark(countOnly);
@@ -54,7 +55,7 @@ namespace chess
                 Coordinates c = new Coordinates(coordinates.x + dx[i], coordinates.y + dy[i]);
                 if (inRange(c))
                 {
-                    BoardTile tile = Board.of(c);
+                    BoardTile tile = Board.instance.of(c);
                     tile.markDanger(true);
                 }
             }

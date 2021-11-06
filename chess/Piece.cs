@@ -57,7 +57,7 @@ namespace chess
         protected int multiStepsMoving(int[] dx, int[] dy,bool countOnly)
         {
             int ret = 0;
-            Board.of(coordinates).switchMark(countOnly);
+            Board.instance.of(coordinates).switchMark(countOnly);
             for (int i = 0; i < dx.Length; i++)
             {
                 Coordinates c = new Coordinates(coordinates.x + dx[i], coordinates.y + dy[i]);
@@ -65,7 +65,7 @@ namespace chess
                 {
                     if (inRange(c))
                     {
-                        BoardTile tile = Board.of(c);
+                        BoardTile tile = Board.instance.of(c);
                         if (tile.isEmpty())
                         {
                             if (GameObserver.isSafeMove(coordinates, c))
@@ -100,7 +100,7 @@ namespace chess
                 {
                     if (inRange(c))
                     {
-                        BoardTile tile = Board.of(c);
+                        BoardTile tile = Board.instance.of(c);
                         if (tile.isEmpty())
                         {
                             tile.markDanger(true);

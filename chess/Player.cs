@@ -58,7 +58,7 @@ namespace chess
             _castle = true;
             _isAttacked = false;
             _virtualAttack = false;
-            _kingTile = _color == PieceColor.white ? Board.of(new Coordinates(7, 4)): Board.of(new Coordinates(0, 4));
+            _kingTile = _color == PieceColor.white ? Board.instance.of(7, 4) : Board.instance.of(0, 4);
         }
         public bool virtualAttack => _virtualAttack;
         public bool castle => _castle;
@@ -66,7 +66,7 @@ namespace chess
         public void moveKing(Coordinates c)
         {
             inDanger(false);
-            _kingTile = Board.of(c);
+            _kingTile = Board.instance.of(c);
         }
         public void inDanger(bool val)
         {
@@ -85,7 +85,7 @@ namespace chess
             _color = color;
             _castle = true;
             _isAttacked = false;
-            _kingTile = (color == PieceColor.white) ? Board.of(new Coordinates(7, 4)) : Board.of(new Coordinates(0, 4));
+            _kingTile = (color == PieceColor.white) ? Board.instance.of(7, 4) : Board.instance.of(0, 4);
 
         }
         public string name=> _name;
@@ -101,18 +101,18 @@ namespace chess
         public void attack(bool virtually = false)
         {
             _virtualAttack = virtually;
-            BoardTile[,] board = Board.instance;
+            Board board = Board.instance;
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
-                    board[i, j].markDanger(false);
+                    board.of(i,j).markDanger(false);
 
             for (int i = 0; i < 8; i++)
             {
                 for(int j = 0; j < 8; j++)
                 {
-                    if (!board[i, j].isEmpty() && isMyPiece(board[i, j].piece))
+                    if (!board.of(i,j).isEmpty() && isMyPiece(board.of(i,j).piece))
                     {
-                        board[i, j].piece.attack();
+                        board.of(i,j).piece.attack();
                     }
                 }
             }

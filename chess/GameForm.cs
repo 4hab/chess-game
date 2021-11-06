@@ -12,7 +12,7 @@ namespace chess
 {
     public partial class GameForm : Form
     {
-        private BoardTile[,] board;
+        private Board board;
         private void gameOver()
         {
             DialogResult result = MessageBox.Show(Player.otherPlayer.name + " Won the match\nPlay again?", "Game Over!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
@@ -37,7 +37,6 @@ namespace chess
         }
         public GameForm(string firstPlayerName, string secondPlayerName)
         {
-            Board.init();
             board = Board.instance;
             Player.setPlayersNames(firstPlayerName, secondPlayerName);
             /*GameObserver.scoreUpdated+=updateScore;
@@ -72,7 +71,7 @@ namespace chess
                 x = 0;
                 for(int column = 0; column < 8; column++)
                 {
-                    BoardTile tile = board[row, column];
+                    BoardTile tile = board.of(row,column);
                     tile.SetBounds(x, y, width, height);
                     boardPanel.Controls.Add(tile);
                     x += width;
@@ -83,23 +82,23 @@ namespace chess
 
         private void unDoButton_Click(object sender, EventArgs e)
         {
-            Board.unDoMove();
+            board.unDoMove();
         }
 
         private void reDoButton_Click(object sender, EventArgs e)
         {
-            Board.reDoMove();
+            board.reDoMove();
         }
 
         private void GameForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Control && e.KeyCode == Keys.Z)
             {
-                Board.unDoMove();
+                board.unDoMove();
             } 
             else if(e.Control&&e.KeyCode==Keys.Y)
             {
-                Board.reDoMove();
+                board.reDoMove();
             }
             //commnt
         }

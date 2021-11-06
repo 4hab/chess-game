@@ -44,21 +44,22 @@ namespace chess
         }
         private void onClick(object sender, EventArgs eventArgs)
         {
-            if (Board.selectedTile != null)
+            Board board = Board.instance;
+            if (board.selectedTile != null)
             {
-                BoardTile tileA = Board.selectedTile;
+                BoardTile tileA = board.selectedTile;
                 BoardTile tileB = sender as BoardTile;
                 if (tileA.coordinates == tileB.coordinates)
                 {
                     //disselect
-                    Board.select(null);
+                    board.select(null);
                     //unmark available cells
                     tileA.piece.unmarkAvailableCells();
                 }
                 else if (tileB.isAvailable)
                 {
                     //move 
-                    Board.move(tileA.coordinates, tileB.coordinates);
+                    board.move(tileA.coordinates, tileB.coordinates);
                 }
                 else
                 {
@@ -70,7 +71,7 @@ namespace chess
                 BoardTile tile = sender as BoardTile;
                 if (!tile.isEmpty() && Player.currentPlayer.isMyPiece(tile.piece))
                 {
-                    Board.select(tile);
+                    board.select(tile);
                     tile.piece.markAvailableCells();
                 }
                 else

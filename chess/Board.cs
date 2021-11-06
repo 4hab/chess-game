@@ -6,64 +6,77 @@ namespace chess
 {
     class Board
     {
-        private static BoardTile[,] _board = new BoardTile[8, 8];
-        public static BoardTile[,] instance => _board;
+        private BoardTile[,] _board;
 
-        public static BoardTile of(Coordinates c) => _board[c.x, c.y];
+        private static Board _instance;
+        public static Board instance => _instance = _instance == null ? new Board() : _instance;
 
-        private static BoardTile _selectedTile = null;
+        private Board()
+        {
+            _board = new BoardTile[8, 8];
+            _init();
 
-        public static BoardTile selectedTile => _selectedTile;
+        }
+        public static void reset()
+        {
+            _instance = new Board();
+        }
+        public BoardTile of(Coordinates c) => _board[c.x, c.y];
+        public BoardTile of(int x,int y) => _board[x,y];
 
-        public static void select(BoardTile tile)
+        private BoardTile _selectedTile = null;
+
+        public BoardTile selectedTile => _selectedTile;
+
+        public void select(BoardTile tile)
         {
             _selectedTile = tile;
         }
 
 
-        public static void move(Coordinates c1, Coordinates c2)
+        public void move(Coordinates c1, Coordinates c2)
         {
             //add to history
-            History.add(c1, c2, of(c2).piece);
+            History.add(c1, c2, instance.of(c2).piece);
             //change piece coordinates firs
-            Board.of(c1).piece.unmarkAvailableCells();
-            Board.of(c1).piece.moveTo(c2);
+            instance.of(c1).piece.unmarkAvailableCells();
+            instance.of(c1).piece.moveTo(c2);
             //change score
-            if (!Board.of(c2).isEmpty())
-                Player.otherPlayer.minusScore(Board.of(c2).piece.val);
+            if (!instance.of(c2).isEmpty())
+                Player.otherPlayer.minusScore(instance.of(c2).piece.val);
             //move pieces
-            Board.of(c2).setPiece(Board.of(c1).piece);
-            Board.of(c1).setPiece(null);
+            instance.of(c2).setPiece(instance.of(c1).piece);
+            instance.of(c1).setPiece(null);
             select(null);
             _afterMove();
         }
-        public static void unDoMove()
+        public void unDoMove()
         {
-            if (Board.selectedTile != null)
+            if (instance.selectedTile != null)
             {
-                Board.selectedTile.piece.unmarkAvailableCells();
-                Board.select(null);
+                instance.selectedTile.piece.unmarkAvailableCells();
+                instance.select(null);
             }
             MoveRecord record = History.unDo();
             if (record == null)
                 return;
             Coordinates c1 = record.destination, c2 = record.source;
             Player.switchPlayer();
-            Board.of(c1).piece.moveTo(c2);
+            instance.of(c1).piece.moveTo(c2);
             Player.switchPlayer();
             if (record.deadPiece != null)
-                Player.otherPlayer.minusScore(record.deadPiece.val * -1);
-            Board.of(c2).setPiece(Board.of(c1).piece);
-            Board.of(c1).setPiece(record.deadPiece);
+                Player.currentPlayer.minusScore(record.deadPiece.val * -1);
+            instance.of(c2).setPiece(instance.of(c1).piece);
+            instance.of(c1).setPiece(record.deadPiece);
             select(null);
             _afterMove();
         }
-        public static void reDoMove()
+        public void reDoMove()
         {
-            if (Board.selectedTile != null)
+            if (instance.selectedTile != null)
             {
-                Board.selectedTile.piece.unmarkAvailableCells();
-                Board.select(null);
+                instance.selectedTile.piece.unmarkAvailableCells();
+                instance.select(null);
             }
             MoveRecord record = History.reDo();
             if (record == null)
@@ -71,18 +84,18 @@ namespace chess
 
             Coordinates c1 = record.source, c2 = record.destination;
             Player.switchPlayer();
-            Board.of(c1).piece.moveTo(c2);
+            instance.of(c1).piece.moveTo(c2);
             Player.switchPlayer();
-            if (Board.of(c1).piece != null)
+            if (instance.of(c1).piece != null)
             {
-                Player.otherPlayer.minusScore(Board.of(c1).piece.val);
+                Player.currentPlayer.minusScore(instance.of(c1).piece.val);
             }
-            Board.of(c2).setPiece(Board.of(c1).piece);
-            Board.of(c1).setPiece(null);
+            instance.of(c2).setPiece(instance.of(c1).piece);
+            instance.of(c1).setPiece(null);
             select(null);
             _afterMove();
         }
-        private static void _afterMove()
+        private void _afterMove()
         {
             //mark danger squares
             Player.currentPlayer.attack();
@@ -91,7 +104,7 @@ namespace chess
             Player.switchPlayer();
             GameObserver.isGameOver();
         }
-        public static void init()
+        private void _init()
         {
             _selectedTile = null;
             History.clear();
@@ -109,7 +122,7 @@ namespace chess
             putKings();
             putQueens();
         }
-        private static void putPawns()
+        private void putPawns()
         {
             for (int column = 0; column < 8; column++)
             {
@@ -121,7 +134,7 @@ namespace chess
 
             }
         }
-        private static void putRooks()
+        private void putRooks()
         {
             int whiteRow = 7, blackRow = 0;
 
@@ -138,7 +151,7 @@ namespace chess
             _board[whiteRow, 0] = new BoardTile(whiteRook1.coordinates, whiteRook1);
             _board[whiteRow, 7] = new BoardTile(whiteRook2.coordinates, whiteRook2);
         }
-        private static void putKnights()
+        private void putKnights()
         {
             int whiteRow = 7, blackRow = 0;
 
@@ -155,7 +168,7 @@ namespace chess
             _board[whiteRow, 1] = new BoardTile(whiteKnight1.coordinates, whiteKnight1);
             _board[whiteRow, 6] = new BoardTile(whiteKnight2.coordinates, whiteKnight2);
         }
-        private static void putBishops()
+        private void putBishops()
         {
             int whiteRow = 7, blackRow = 0;
 
@@ -172,7 +185,7 @@ namespace chess
             _board[whiteRow, 2] = new BoardTile(whiteBishop1.coordinates, whiteBishop1);
             _board[whiteRow, 5] = new BoardTile(whiteBishop2.coordinates, whiteBishop2);
         }
-        private static void putKings()
+        private void putKings()
         {
             int whiteRow = 7, blackRow = 0;
 
@@ -185,7 +198,7 @@ namespace chess
 
             _board[whiteRow, 4] = new BoardTile(whiteKing.coordinates, whiteKing);
         }
-        private static void putQueens()
+        private void putQueens()
         {
             int whiteRow = 7, blackRow = 0;
 

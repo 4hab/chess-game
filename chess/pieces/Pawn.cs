@@ -20,7 +20,7 @@ namespace chess
         private int dx => color == PieceColor.white ? -1 : 1;
         protected override int lookForAvailableCells(bool countOnly)
         {
-            Board.of(coordinates).switchMark(countOnly);
+            Board.instance.of(coordinates).switchMark(countOnly);
             return _attack(countOnly) + _move(countOnly);
         }
 
@@ -30,12 +30,12 @@ namespace chess
             Coordinates c2 = new Coordinates(coordinates.x + dx, coordinates.y - 1);
             if (inRange(c1))
             {
-                BoardTile tile = Board.of(c1);
+                BoardTile tile = Board.instance.of(c1);
                 tile.markDanger(true);
             }
             if (inRange(c2))
             {
-                BoardTile tile = Board.of(c2);
+                BoardTile tile = Board.instance.of(c2);
                 tile.markDanger(true);
             }
         }
@@ -46,7 +46,7 @@ namespace chess
             Coordinates c2 = new Coordinates(coordinates.x + dx, coordinates.y - 1);
             if (inRange(c1))
             {
-                BoardTile tile = Board.of(c1);
+                BoardTile tile = Board.instance.of(c1);
                 if (!tile.isEmpty() && tile.piece.isEnemy() && GameObserver.isSafeMove(coordinates, c1))
                 {
                     tile.switchMark(countOnly);
@@ -55,7 +55,7 @@ namespace chess
             }
             if (inRange(c2))
             {
-                BoardTile tile = Board.of(c2);
+                BoardTile tile = Board.instance.of(c2);
                 if (!tile.isEmpty() && tile.piece.isEnemy() && GameObserver.isSafeMove(coordinates, c2))
                 {
                     tile.switchMark(countOnly);
@@ -71,13 +71,13 @@ namespace chess
             Coordinates c2 = new Coordinates(coordinates.x + dx + dx, coordinates.y);
             if (inRange(c1))
             {
-                BoardTile tile = Board.of(c1);
+                BoardTile tile = Board.instance.of(c1);
                 if (tile.isEmpty() && GameObserver.isSafeMove(coordinates, c1))
                 {
                     //mark c1
                     tile.switchMark(countOnly);
                     ret++;
-                    tile = Board.of(c2);
+                    tile = Board.instance.of(c2);
                     if (firstMove && tile.isEmpty() && GameObserver.isSafeMove(coordinates, c2))
                     {
                         //mark c2
