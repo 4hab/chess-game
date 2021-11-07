@@ -7,39 +7,6 @@ namespace chess
 {
     class Player
     {
-        private static Player _player1 = new Player("Player 1", PieceColor.white);
-        private static Player _player2 = new Player("Player 2", PieceColor.black);
-        private static Player _currentPlayer = _player1;
-
-        public static void switchPlayer()
-        {
-            if (_currentPlayer == _player1)
-                _currentPlayer = _player2;
-            else
-                _currentPlayer = _player1;
-        }
-
-        public static void reset()
-        {
-            _currentPlayer = _player1;
-            _player1.resetData();
-            _player2.resetData();
-        }
-
-        public static Player currentPlayer => _currentPlayer;
-        public static Player otherPlayer => _currentPlayer == _player1 ? _player2 : _player1;
-
-        public static Player whitePlayer => _player1;
-        public static Player blackPlayer => _player2;
-
-        public static void setPlayersNames(string name1,string name2)
-        {
-            whitePlayer.setName(name1);
-            blackPlayer.setName(name2);
-        }
-
-        //-------------------------------------------------------------------------------------------
-
         private string _name;
         private int _score;
         private PieceColor _color;
@@ -47,6 +14,23 @@ namespace chess
         private bool _isAttacked;
         private bool _virtualAttack = false;
         private BoardTile _kingTile;
+
+        public Player(string name, PieceColor color)
+        {
+            _name = name;
+            _score = 39;
+            _color = color;
+            _castle = true;
+            _isAttacked = false;
+            _kingTile = (color == PieceColor.white) ? Board.instance.of(7, 4) : Board.instance.of(0, 4);
+
+        }
+        public string name => _name;
+        public int score => _score;
+        public PieceColor color => _color;
+        public bool virtualAttack => _virtualAttack;
+        public bool castle => _castle;
+        public bool isAttacked => _isAttacked;
         public void setName(string name)
         {
             _name = name;
@@ -60,9 +44,6 @@ namespace chess
             _virtualAttack = false;
             _kingTile = _color == PieceColor.white ? Board.instance.of(7, 4) : Board.instance.of(0, 4);
         }
-        public bool virtualAttack => _virtualAttack;
-        public bool castle => _castle;
-        public bool isAttacked => _isAttacked;
         public void moveKing(Coordinates c)
         {
             inDanger(false);
@@ -78,26 +59,12 @@ namespace chess
                 _kingTile.BackColor = _kingTile.color == PieceColor.white ? Color.White : Color.DarkGray;
             }
         }
-        public Player(string name, PieceColor color)
-        {
-            _name = name;
-            _score = 39;
-            _color = color;
-            _castle = true;
-            _isAttacked = false;
-            _kingTile = (color == PieceColor.white) ? Board.instance.of(7, 4) : Board.instance.of(0, 4);
-
-        }
-        public string name=> _name;
-        
-        public int score => _score;
 
         public void minusScore(int val)
         {
             _score -= val;
-            GameObserver.updateScore();
+            GameObserver.instance.updateScore();
         }
-        public PieceColor color => _color;
         public void attack(bool virtually = false)
         {
             _virtualAttack = virtually;

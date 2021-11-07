@@ -12,7 +12,7 @@ namespace chess
 
         public override void moveTo(Coordinates c)
         {
-            Player.currentPlayer.moveKing(c);
+            GameObserver.instance.currentPlayer.moveKing(c);
             base.moveTo(c);
         }
         public King(Coordinates coordinates, PieceColor color) : base(coordinates, color)
@@ -32,12 +32,12 @@ namespace chess
                 if (inRange(c))
                 {
                     BoardTile tile = board.of(c);
-                    if (tile.isEmpty() && !tile.danger && GameObserver.isSafeMove(coordinates, c))
+                    if (tile.isEmpty() && !tile.danger && Board.instance.isSafeMove(coordinates, c))
                     {
                         tile.switchMark(countOnly);
                         ret++;
                     }
-                    else if (!tile.isEmpty() && tile.piece.isEnemy() && !tile.danger && GameObserver.isSafeMove(coordinates, c))
+                    else if (!tile.isEmpty() && tile.piece.isEnemy() && !tile.danger && Board.instance.isSafeMove(coordinates, c))
                     {
                         tile.switchMark(countOnly);
                         ret++;

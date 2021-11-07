@@ -26,12 +26,12 @@ namespace chess
                 if (inRange(c))
                 {
                     BoardTile tile = Board.instance.of(c);
-                    if (tile.isEmpty() && GameObserver.isSafeMove(coordinates, c))
+                    if (tile.isEmpty() && Board.instance.isSafeMove(coordinates, c))
                     {
                         tile.switchMark(countOnly);
                         ret++;
                     }
-                    else if (!tile.isEmpty() && tile.piece.isEnemy() && GameObserver.isSafeMove(coordinates, c))
+                    else if (!tile.isEmpty() && tile.piece.isEnemy() && Board.instance.isSafeMove(coordinates, c))
                     {
                         tile.switchMark(countOnly);
                         ret++;

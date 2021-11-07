@@ -47,7 +47,7 @@ namespace chess
             if (inRange(c1))
             {
                 BoardTile tile = Board.instance.of(c1);
-                if (!tile.isEmpty() && tile.piece.isEnemy() && GameObserver.isSafeMove(coordinates, c1))
+                if (!tile.isEmpty() && tile.piece.isEnemy() && Board.instance.isSafeMove(coordinates, c1))
                 {
                     tile.switchMark(countOnly);
                     ret++;
@@ -56,7 +56,7 @@ namespace chess
             if (inRange(c2))
             {
                 BoardTile tile = Board.instance.of(c2);
-                if (!tile.isEmpty() && tile.piece.isEnemy() && GameObserver.isSafeMove(coordinates, c2))
+                if (!tile.isEmpty() && tile.piece.isEnemy() && Board.instance.isSafeMove(coordinates, c2))
                 {
                     tile.switchMark(countOnly);
                     ret++;
@@ -72,13 +72,13 @@ namespace chess
             if (inRange(c1))
             {
                 BoardTile tile = Board.instance.of(c1);
-                if (tile.isEmpty() && GameObserver.isSafeMove(coordinates, c1))
+                if (tile.isEmpty() && Board.instance.isSafeMove(coordinates, c1))
                 {
                     //mark c1
                     tile.switchMark(countOnly);
                     ret++;
                     tile = Board.instance.of(c2);
-                    if (firstMove && tile.isEmpty() && GameObserver.isSafeMove(coordinates, c2))
+                    if (firstMove && tile.isEmpty() && Board.instance.isSafeMove(coordinates, c2))
                     {
                         //mark c2
                         tile.switchMark(countOnly);

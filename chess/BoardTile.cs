@@ -34,10 +34,10 @@ namespace chess
             if (val == true)
             {
                 //other player's king is attacked
-                if (piece != null && piece is King && Player.otherPlayer.isMyPiece(piece))
+                if (piece != null && piece is King && GameObserver.instance.otherPlayer.isMyPiece(piece))
                 {
-                    Player.otherPlayer.inDanger(true);
-                    if (!Player.currentPlayer.virtualAttack)
+                    GameObserver.instance.otherPlayer.inDanger(true);
+                    if (!GameObserver.instance.currentPlayer.virtualAttack)
                         BackColor = Color.Red;
                 }
             }
@@ -69,7 +69,7 @@ namespace chess
             else
             {
                 BoardTile tile = sender as BoardTile;
-                if (!tile.isEmpty() && Player.currentPlayer.isMyPiece(tile.piece))
+                if (!tile.isEmpty() && GameObserver.instance.currentPlayer.isMyPiece(tile.piece))
                 {
                     board.select(tile);
                     tile.piece.markAvailableCells();

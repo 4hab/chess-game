@@ -7,51 +7,58 @@ namespace chess
     public delegate void Notify();
     class GameObserver
     {
-        public static BoardTile selectedTile = null;
-        public static Notify gameOver;
-        public static Notify gameOverDraw;
-        public static Notify scoreUpdated;
-        public static int score=> Player.whitePlayer.score - Player.blackPlayer.score;
+        private static GameObserver _instance;
+        public static GameObserver instance => _instance = _instance == null ? new GameObserver() : _instance;
+        private GameObserver()
+        {
+            _player1 = new Player("Player 1", PieceColor.white);
+            _player2 = new Player("Player 2", PieceColor.black);
+            _currentPlayer = _player1;
+        }
 
-        public static void updateScore()
+        public  Notify gameOver;
+        public  Notify gameOverDraw;
+        public  Notify scoreUpdated;
+        private Player _player1;
+        private Player _player2;
+        private Player _currentPlayer;
+
+
+        public int score => whitePlayer.score - blackPlayer.score;
+        public void switchPlayer()
+        {
+            if (_currentPlayer == _player1)
+                _currentPlayer = _player2;
+            else
+                _currentPlayer = _player1;
+        }
+
+        public Player currentPlayer => _currentPlayer;
+        public Player otherPlayer => _currentPlayer == _player1 ? _player2 : _player1;
+
+        public Player whitePlayer => _player1;
+        public Player blackPlayer => _player2;
+
+        public void setPlayersNames(string name1, string name2)
+        {
+            whitePlayer.setName(name1);
+            blackPlayer.setName(name2);
+        }
+
+        public void updateScore()
         {
             scoreUpdated.Invoke();
         }
-        
-        public static bool isSafeMove(Coordinates c1, Coordinates c2)
+
+        public void reset()
         {
-            Board board = Board.instance;
-            //save original situation
-            Piece p1 = board.of(c1).piece;
-            Piece p2 = board.of(c2).piece;
-            bool initialDangerStatus = Player.currentPlayer.isAttacked;
-            Player.currentPlayer.inDanger(false);
-
-            //move pieces virtually
-            board.of(c2).setPiece(p1, true);
-            board.of(c1).setPiece(null, true);
-            //let other player attacks [virtually] to see if the situation is safe or not
-            Player.switchPlayer();
-            Player.currentPlayer.attack(virtually: true);
-            Player.switchPlayer();
-            bool currentDangerStatus = Player.currentPlayer.isAttacked;
-
-            //return to the original situation
-            board.of(c2).setPiece(p2);
-            board.of(c1).setPiece(p1);
-            Player.currentPlayer.inDanger(initialDangerStatus);
-
-            //if my king is attacked => false(not safe move) otherwise => true(safe move)
-            return !currentDangerStatus;
-        }
-
-        public static void reset()
-        {
+            _currentPlayer = _player1;
+            _player1.resetData();
+            _player2.resetData();
             Board.reset();
-            Player.reset();
-            History.clear();
+            History.instance.clear();
         }
-        public static void isGameOver()
+        public void isGameOver()
         {
             Board board = Board.instance;
             for(int i = 0; i < 8; i++)
@@ -59,13 +66,13 @@ namespace chess
                 for(int j = 0; j < 8; j++)
                 {
                     BoardTile tile = board.of(new Coordinates(i, j));
-                    if (!tile.isEmpty() && Player.currentPlayer.isMyPiece(tile.piece) && tile.piece.countAvailableTiles() > 0) 
+                    if (!tile.isEmpty() && currentPlayer.isMyPiece(tile.piece) && tile.piece.countAvailableTiles() > 0) 
                     {
                         return;
                     }
                 }
             }
-            if(!Player.currentPlayer.isAttacked)
+            if(!currentPlayer.isAttacked)
             {
                 //draw
                 gameOverDraw.Invoke();

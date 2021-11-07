@@ -13,16 +13,17 @@ namespace chess
     public partial class GameForm : Form
     {
         private Board board;
+        private GameObserver observer;
         private void gameOver()
         {
-            DialogResult result = MessageBox.Show(Player.otherPlayer.name + " Won the match\nPlay again?", "Game Over!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            DialogResult result = MessageBox.Show(GameObserver.instance.otherPlayer.name + " Won the match\nPlay again?", "Game Over!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
             stayOrLeave(result);
         }
         private void stayOrLeave(DialogResult result)
         {
             if (result == DialogResult.Yes)
             {
-                GameObserver.reset();
+                GameObserver.instance.reset();
                 this.Close();
             }
             else
@@ -38,26 +39,25 @@ namespace chess
         public GameForm(string firstPlayerName, string secondPlayerName)
         {
             board = Board.instance;
-            Player.setPlayersNames(firstPlayerName, secondPlayerName);
-            /*GameObserver.scoreUpdated+=updateScore;
-            GameObserver.check += check;*/
-            GameObserver.gameOver += gameOver;
-            GameObserver.scoreUpdated += updateScore;
-            GameObserver.gameOverDraw += gameOverDraw;
+            observer = GameObserver.instance;
+            GameObserver.instance.setPlayersNames(firstPlayerName, secondPlayerName);
+            observer.scoreUpdated += updateScore;
+            observer.gameOverDraw += gameOverDraw;
+            observer.gameOver += gameOver;
             InitializeComponent();
             SetBounds(Bounds.X, Bounds.Y, 740, 740);
             drawBoard();
         }
         private void updateScore()
         {
-            int score = GameObserver.score;
+            int score = observer.score;
             scoreLabel1.Text = score > 0 ? "+"+score.ToString() : "";
             scoreLabel2.Text = score < 0 ? "+"+(score * -1).ToString() : "";
         }
         private void drawBoard()
         {
-            blackPlayerNameLabel.Text = Player.blackPlayer.name;
-            whitePlayerNameLabel.Text = Player.whitePlayer.name;
+            blackPlayerNameLabel.Text = GameObserver.instance.blackPlayer.name;
+            whitePlayerNameLabel.Text = GameObserver.instance.whitePlayer.name;
             blackPlayerNameLabel.SetBounds(120, 60, blackPlayerNameLabel.Size.Width, blackPlayerNameLabel.Size.Height);
             whitePlayerNameLabel.SetBounds(120, 600, whitePlayerNameLabel.Size.Width, whitePlayerNameLabel.Size.Height);
             scoreLabel2.SetBounds(200, 60, scoreLabel2.Size.Width, scoreLabel2.Size.Height);

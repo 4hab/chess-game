@@ -44,7 +44,7 @@ namespace chess
         }
         public bool isEnemy()
         {
-            return color != Player.currentPlayer.color;
+            return color != GameObserver.instance.currentPlayer.color;
         }
         protected bool inRange(int x, int y)
         {
@@ -68,7 +68,7 @@ namespace chess
                         BoardTile tile = Board.instance.of(c);
                         if (tile.isEmpty())
                         {
-                            if (GameObserver.isSafeMove(coordinates, c))
+                            if (Board.instance.isSafeMove(coordinates, c))
                             {
                                 tile.switchMark(countOnly);
                                 ret++;
@@ -76,7 +76,7 @@ namespace chess
                         }
                         else if (tile.piece.isEnemy())
                         {
-                            if(GameObserver.isSafeMove(coordinates, c))
+                            if(Board.instance.isSafeMove(coordinates, c))
                             {
                                 tile.switchMark(countOnly);
                                 ret++;

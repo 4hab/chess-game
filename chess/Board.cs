@@ -37,13 +37,13 @@ namespace chess
         public void move(Coordinates c1, Coordinates c2)
         {
             //add to history
-            History.add(c1, c2, instance.of(c2).piece);
+            History.instance.add(c1, c2, instance.of(c2).piece);
             //change piece coordinates firs
             instance.of(c1).piece.unmarkAvailableCells();
             instance.of(c1).piece.moveTo(c2);
             //change score
             if (!instance.of(c2).isEmpty())
-                Player.otherPlayer.minusScore(instance.of(c2).piece.val);
+                GameObserver.instance.otherPlayer.minusScore(instance.of(c2).piece.val);
             //move pieces
             instance.of(c2).setPiece(instance.of(c1).piece);
             instance.of(c1).setPiece(null);
@@ -57,15 +57,15 @@ namespace chess
                 instance.selectedTile.piece.unmarkAvailableCells();
                 instance.select(null);
             }
-            MoveRecord record = History.unDo();
+            MoveRecord record = History.instance.unDo();
             if (record == null)
                 return;
             Coordinates c1 = record.destination, c2 = record.source;
-            Player.switchPlayer();
+            GameObserver.instance.switchPlayer();
             instance.of(c1).piece.moveTo(c2);
-            Player.switchPlayer();
+            GameObserver.instance.switchPlayer();
             if (record.deadPiece != null)
-                Player.currentPlayer.minusScore(record.deadPiece.val * -1);
+                GameObserver.instance.currentPlayer.minusScore(record.deadPiece.val * -1);
             instance.of(c2).setPiece(instance.of(c1).piece);
             instance.of(c1).setPiece(record.deadPiece);
             select(null);
@@ -78,36 +78,62 @@ namespace chess
                 instance.selectedTile.piece.unmarkAvailableCells();
                 instance.select(null);
             }
-            MoveRecord record = History.reDo();
+            MoveRecord record = History.instance.reDo();
             if (record == null)
                 return;
 
             Coordinates c1 = record.source, c2 = record.destination;
-            Player.switchPlayer();
+            GameObserver.instance.switchPlayer();
             instance.of(c1).piece.moveTo(c2);
-            Player.switchPlayer();
+            GameObserver.instance.switchPlayer();
             if (instance.of(c1).piece != null)
             {
-                Player.currentPlayer.minusScore(instance.of(c1).piece.val);
+                GameObserver.instance.currentPlayer.minusScore(instance.of(c1).piece.val);
             }
             instance.of(c2).setPiece(instance.of(c1).piece);
             instance.of(c1).setPiece(null);
             select(null);
             _afterMove();
         }
+        public bool isSafeMove(Coordinates c1, Coordinates c2)
+        {
+            Board board = Board.instance;
+            //save original situation
+            Piece p1 = board.of(c1).piece;
+            Piece p2 = board.of(c2).piece;
+            bool initialDangerStatus = GameObserver.instance.currentPlayer.isAttacked;
+            GameObserver.instance.currentPlayer.inDanger(false);
+
+            //move pieces virtually
+            board.of(c2).setPiece(p1, true);
+            board.of(c1).setPiece(null, true);
+            //let other player attacks [virtually] to see if the situation is safe or not
+            GameObserver.instance.switchPlayer();
+            GameObserver.instance.currentPlayer.attack(virtually: true);
+            GameObserver.instance.switchPlayer();
+            bool currentDangerStatus = GameObserver.instance.currentPlayer.isAttacked;
+
+            //return to the original situation
+            board.of(c2).setPiece(p2);
+            board.of(c1).setPiece(p1);
+            GameObserver.instance.currentPlayer.inDanger(initialDangerStatus);
+
+            //if my king is attacked => false(not safe move) otherwise => true(safe move)
+            return !currentDangerStatus;
+        }
         private void _afterMove()
         {
             //mark danger squares
-            Player.currentPlayer.attack();
-            Player.currentPlayer.inDanger(false);
+            GameObserver.instance.currentPlayer.attack();
+            GameObserver.instance.currentPlayer.inDanger(false);
             //switch player
-            Player.switchPlayer();
-            GameObserver.isGameOver();
+            GameObserver.instance.switchPlayer();
+            GameObserver.instance.isGameOver();
         }
         private void _init()
         {
             _selectedTile = null;
-            History.clear();
+            History.instance.clear();
             for (int row = 0; row < 8; row++)
             {
                 for (int column = 0; column < 8; column++)
