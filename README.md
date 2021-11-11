@@ -8,7 +8,7 @@ with a decent design
 Here is my design
 
 ### UML diagram
-![UML diagram](https://github.com/4hab/chess-game/blob/master/Chess%20Diagram.jpg)
+<img src="https://github.com/4hab/chess-game/blob/master/Chess%20Diagram.jpg" alt="drawing" width="650"/>
 
 
 ### Todo:
