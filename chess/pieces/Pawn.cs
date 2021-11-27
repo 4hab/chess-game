@@ -72,19 +72,24 @@ namespace chess
             if (inRange(c1))
             {
                 BoardTile tile = Board.instance.of(c1);
-                if (Board.instance.isSafeMove(coordinates, c1))
+                if (tile.isEmpty())
                 {
-                    //mark c1
-                    tile.switchMark(countOnly);
-                    ret++;
+                    if(Board.instance.isSafeMove(coordinates, c1))
+                    {
+                        //mark c1
+                        tile.switchMark(countOnly);
+                        ret++;
+                    }
+                    tile = Board.instance.of(c2);
+                    if (firstMove && tile.isEmpty() && Board.instance.isSafeMove(coordinates, c2))
+                    {
+                        //mark c2
+                        tile.switchMark(countOnly);
+                        ret++;
+                    }
+
                 }
-                tile = Board.instance.of(c2);
-                if (tile.isEmpty() && firstMove && tile.isEmpty() && Board.instance.isSafeMove(coordinates, c2))
-                {
-                    //mark c2
-                    tile.switchMark(countOnly);
-                    ret++;
-                }
+                
             }
             return ret;
         }
