@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "80c56f8d-604c-4e85-b0be-09578196388d": {
+      "ProjectGuid": "80c56f8d-604c-4e85-b0be-09578196388d",
+      "DisplayName": "chess",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

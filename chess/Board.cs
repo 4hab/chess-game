@@ -22,7 +22,7 @@ namespace chess
             _instance = new Board();
         }
         public BoardTile of(Coordinates c) => _board[c.x, c.y];
-        public BoardTile of(int x,int y) => _board[x,y];
+        public BoardTile of(int x, int y) => _board[x, y];
 
         private BoardTile _selectedTile = null;
 
@@ -81,15 +81,15 @@ namespace chess
             MoveRecord record = History.instance.reDo();
             if (record == null)
                 return;
-
-            Coordinates c1 = record.source, c2 = record.destination;
+            Coordinates c1 = record.source, c2 = record.destination; 
+            if (instance.of(c2).piece != null)
+            {
+                GameObserver.instance.otherPlayer.minusScore(instance.of(c2).piece.val);
+            }
             GameObserver.instance.switchPlayer();
             instance.of(c1).piece.moveTo(c2);
             GameObserver.instance.switchPlayer();
-            if (instance.of(c1).piece != null)
-            {
-                GameObserver.instance.currentPlayer.minusScore(instance.of(c1).piece.val);
-            }
+
             instance.of(c2).setPiece(instance.of(c1).piece);
             instance.of(c1).setPiece(null);
             select(null);

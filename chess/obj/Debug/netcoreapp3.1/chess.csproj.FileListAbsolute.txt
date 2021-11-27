@@ -16,3 +16,21 @@ E:\chess\chess\obj\Debug\netcoreapp3.1\chess.genruntimeconfig.cache
 E:\chess\chess\obj\Debug\netcoreapp3.1\chess.Properties.Resources.resources
 E:\chess\chess\obj\Debug\netcoreapp3.1\chess.csproj.AssemblyReference.cache
 E:\chess\chess\obj\Debug\netcoreapp3.1\chess.WelcomeForm.resources
+D:\visual studio projects\chess\chess\bin\Debug\netcoreapp3.1\chess.exe
+D:\visual studio projects\chess\chess\bin\Debug\netcoreapp3.1\chess.deps.json
+D:\visual studio projects\chess\chess\bin\Debug\netcoreapp3.1\chess.runtimeconfig.json
+D:\visual studio projects\chess\chess\bin\Debug\netcoreapp3.1\chess.runtimeconfig.dev.json
+D:\visual studio projects\chess\chess\bin\Debug\netcoreapp3.1\chess.dll
+D:\visual studio projects\chess\chess\bin\Debug\netcoreapp3.1\chess.pdb
+D:\visual studio projects\chess\chess\obj\Debug\netcoreapp3.1\chess.csproj.AssemblyReference.cache
+D:\visual studio projects\chess\chess\obj\Debug\netcoreapp3.1\chess.GameForm.resources
+D:\visual studio projects\chess\chess\obj\Debug\netcoreapp3.1\chess.Properties.Resources.resources
+D:\visual studio projects\chess\chess\obj\Debug\netcoreapp3.1\chess.WelcomeForm.resources
+D:\visual studio projects\chess\chess\obj\Debug\netcoreapp3.1\chess.csproj.GenerateResource.cache
+D:\visual studio projects\chess\chess\obj\Debug\netcoreapp3.1\chess.GeneratedMSBuildEditorConfig.editorconfig
+D:\visual studio projects\chess\chess\obj\Debug\netcoreapp3.1\chess.AssemblyInfoInputs.cache
+D:\visual studio projects\chess\chess\obj\Debug\netcoreapp3.1\chess.AssemblyInfo.cs
+D:\visual studio projects\chess\chess\obj\Debug\netcoreapp3.1\chess.csproj.CoreCompileInputs.cache
+D:\visual studio projects\chess\chess\obj\Debug\netcoreapp3.1\chess.dll
+D:\visual studio projects\chess\chess\obj\Debug\netcoreapp3.1\chess.pdb
+D:\visual studio projects\chess\chess\obj\Debug\netcoreapp3.1\chess.genruntimeconfig.cache

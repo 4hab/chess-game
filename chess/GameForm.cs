@@ -60,8 +60,8 @@ namespace chess
             whitePlayerNameLabel.Text = GameObserver.instance.whitePlayer.name;
             blackPlayerNameLabel.SetBounds(120, 60, blackPlayerNameLabel.Size.Width, blackPlayerNameLabel.Size.Height);
             whitePlayerNameLabel.SetBounds(120, 600, whitePlayerNameLabel.Size.Width, whitePlayerNameLabel.Size.Height);
-            scoreLabel2.SetBounds(200, 60, scoreLabel2.Size.Width, scoreLabel2.Size.Height);
-            scoreLabel1.SetBounds(200, 600, scoreLabel1.Size.Width, scoreLabel1.Size.Height);
+            scoreLabel2.SetBounds(300, 60, scoreLabel2.Size.Width, scoreLabel2.Size.Height);
+            scoreLabel1.SetBounds(300, 600, scoreLabel1.Size.Width, scoreLabel1.Size.Height);
 
             boardPanel.SetBounds(120, 100, 80 * 8, 80 * 8);
             int x, y=0;

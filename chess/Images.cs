@@ -6,17 +6,19 @@ namespace chess
 {
     class Images
     {
-        public static string blackBishop = "E:\\chess\\chess\\images\\bishop_black.png";
-        public static string whiteBishop = "E:\\chess\\chess\\images\\bishop_white.png";
-        public static string blackRook = "E:\\chess\\chess\\images\\rook_black.png";
-        public static string whiteRook = "E:\\chess\\chess\\images\\rook_white.png";
-        public static string blackKnight = "E:\\chess\\chess\\images\\knight_black.png";
-        public static string whiteKnight = "E:\\chess\\chess\\images\\knight_white.png";
-        public static string blackQueen = "E:\\chess\\chess\\images\\queen_black.png";
-        public static string whiteQueen = "E:\\chess\\chess\\images\\queen_white.png";
-        public static string blackKing = "E:\\chess\\chess\\images\\king_black.png";
-        public static string whiteKing = "E:\\chess\\chess\\images\\king_white.png";
-        public static string blackPawn = "E:\\chess\\chess\\images\\pawn_black.png";
-        public static string whitePawn = "E:\\chess\\chess\\images\\pawn_white.png";
+        private static string path = "..\\..\\..\\images\\";
+
+        public static string blackBishop = path + "bishop_black.png";
+        public static string whiteBishop = path + "bishop_white.png";
+        public static string blackRook = path + "rook_black.png";
+        public static string whiteRook = path + "rook_white.png";
+        public static string blackKnight = path + "knight_black.png";
+        public static string whiteKnight = path + "knight_white.png";
+        public static string blackQueen = path + "queen_black.png";
+        public static string whiteQueen = path + "queen_white.png";
+        public static string blackKing = path + "king_black.png";
+        public static string whiteKing = path + "king_white.png";
+        public static string blackPawn = path + "pawn_black.png";
+        public static string whitePawn = path + "pawn_white.png";
     }
 }
